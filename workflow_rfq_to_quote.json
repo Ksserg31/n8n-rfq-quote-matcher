@@ -1,0 +1,195 @@
+{
+  "name": "RFQ PDF → catalogue match → Excel quotation draft",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Quotation request",
+        "formDescription": "Upload a text-based RFQ PDF. Scanned PDFs need OCR first.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "RFQ PDF",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "rfq-upload",
+      "name": "RFQ upload",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2,
+      "position": [
+        -260,
+        300
+      ],
+      "webhookId": "rfq-upload-demo"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "RFQ_PDF",
+        "options": {}
+      },
+      "id": "extract-from-file",
+      "name": "Extract from File",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "/* ---------------------------------------------------------------\n * CATALOGUE SOURCE — replace this node with your real source.\n *\n * Swap for: Google Sheets (Get Rows) / Postgres (Select) / HTTP Request\n * to your ERP. The only contract the rest of the workflow needs is\n * one item per article with these fields:\n *\n *   code, description, unit, unit_price_eur, manufacturer\n *\n * Nothing downstream cares where the rows came from.\n * The inline CSV below is the demo catalogue so the workflow runs\n * out of the box.\n * --------------------------------------------------------------- */\n\nconst CSV = \"code,description,unit,unit_price_eur,manufacturer\\nCBL-NYY-J-5G2.5,\\\"Power cable NYY-J 5G2.5 mm² black\\\",m,3.85,Lapp\\nCBL-NYY-J-5G4,\\\"Power cable NYY-J 5G4 mm² black\\\",m,5.90,Lapp\\nCBL-NYY-J-3G1.5,\\\"Power cable NYY-J 3G1.5 mm² black\\\",m,1.72,Lapp\\nCBL-NYM-J-3G1.5,\\\"Installation cable NYM-J 3G1.5 mm² grey\\\",m,1.05,Lapp\\nCBL-NYM-J-5G2.5,\\\"Installation cable NYM-J 5G2.5 mm² grey\\\",m,2.68,Lapp\\nCBL-H07V-K-1X6,\\\"Single core H07V-K 1x6 mm² green/yellow\\\",m,1.24,Helukabel\\nCBL-H07V-K-1X10,\\\"Single core H07V-K 1x10 mm² black\\\",m,2.05,Helukabel\\nMCB-B16-1P,\\\"Miniature circuit breaker B16 1-pole 6kA\\\",pc,6.40,Hager\\nMCB-B16-3P,\\\"Miniature circuit breaker B16 3-pole 6kA\\\",pc,19.80,Hager\\nMCB-C16-1P,\\\"Miniature circuit breaker C16 1-pole 6kA\\\",pc,6.95,Hager\\nMCB-B10-1P,\\\"Miniature circuit breaker B10 1-pole 6kA\\\",pc,6.20,Hager\\nMCB-B32-3P,\\\"Miniature circuit breaker B32 3-pole 6kA\\\",pc,23.40,Hager\\nRCD-40-2P-30,\\\"Residual current device 40A 2-pole 30mA type A\\\",pc,48.50,Hager\\nRCD-40-4P-30,\\\"Residual current device 40A 4-pole 30mA type A\\\",pc,76.20,Hager\\nRCD-63-4P-30,\\\"Residual current device 63A 4-pole 30mA type A\\\",pc,98.40,Hager\\nCON-9A-230,\\\"Contactor 9A 3-pole coil 230VAC 1NO\\\",pc,28.90,Schneider\\nCON-12A-230,\\\"Contactor 12A 3-pole coil 230VAC 1NO\\\",pc,34.10,Schneider\\nCON-18A-230,\\\"Contactor 18A 3-pole coil 230VAC 1NO\\\",pc,46.70,Schneider\\nCON-25A-24,\\\"Contactor 25A 3-pole coil 24VDC 1NO\\\",pc,61.30,Schneider\\nOLR-6-10,\\\"Thermal overload relay 6-10A\\\",pc,32.80,Schneider\\nOLR-9-13,\\\"Thermal overload relay 9-13A\\\",pc,34.50,Schneider\\nENC-IP65-300,\\\"Wall enclosure IP65 300x200x150 grey\\\",pc,42.00,Rittal\\nENC-IP65-400,\\\"Wall enclosure IP65 400x300x200 grey\\\",pc,64.50,Rittal\\nENC-IP66-600,\\\"Wall enclosure IP66 600x400x200 grey\\\",pc,118.00,Rittal\\nDIN-RAIL-35,\\\"DIN rail TS35 perforated 2m\\\",pc,4.60,Rittal\\nTB-2.5-GY,\\\"Terminal block screw 2.5mm² grey\\\",pc,0.62,Phoenix\\nTB-4-GY,\\\"Terminal block screw 4mm² grey\\\",pc,0.88,Phoenix\\nTB-2.5-BU,\\\"Terminal block screw 2.5mm² blue\\\",pc,0.66,Phoenix\\nCGL-M20,\\\"Cable gland M20 IP68 plastic grey\\\",pc,0.74,Lapp\\nCGL-M25,\\\"Cable gland M25 IP68 plastic grey\\\",pc,0.95,Lapp\\nCGL-M32,\\\"Cable gland M32 IP68 plastic grey\\\",pc,1.48,Lapp\\nSOC-CEE-16-5P,\\\"CEE socket 16A 5-pole 400V IP44 surface\\\",pc,14.20,Mennekes\\nSOC-CEE-32-5P,\\\"CEE socket 32A 5-pole 400V IP44 surface\\\",pc,26.80,Mennekes\\nPLG-CEE-16-5P,\\\"CEE plug 16A 5-pole 400V IP44\\\",pc,11.90,Mennekes\\nLED-PAN-600-40,\\\"LED panel 600x600 40W 4000K UGR19\\\",pc,38.90,Ledvance\\nLED-PAN-600-30,\\\"LED panel 600x600 30W 4000K UGR19\\\",pc,34.20,Ledvance\\nLED-BAT-1500-50,\\\"LED batten 1500mm 50W 4000K IP65\\\",pc,29.60,Ledvance\\nSW-1P-IP44,\\\"Surface switch 1-pole 10A IP44 grey\\\",pc,5.30,Gira\\nSOC-SCHUKO-IP44,\\\"Surface Schuko socket 16A IP44 grey\\\",pc,6.80,Gira\\nPSU-24-5,\\\"DIN rail power supply 24VDC 5A 120W\\\",pc,74.50,Mean Well\\nPSU-24-10,\\\"DIN rail power supply 24VDC 10A 240W\\\",pc,118.00,Mean Well\\nSPD-T2-4P,\\\"Surge protection device type 2 4-pole\\\",pc,89.00,Dehn\\nCT-100-5,\\\"Current transformer 100/5A class 1\\\",pc,21.40,Janitza\\nML-CU-12X2,\\\"Copper busbar 12x2mm 1m\\\",pc,9.80,Rittal\\n\";\n\nfunction parseCsv(txt) {\n  const lines = txt.trim().split(/\\r?\\n/);\n  const head = lines.shift().split(',');\n  return lines.map(l => {\n    const cells = []; let cur = '', q = false;\n    for (const ch of l) {\n      if (ch === '\"') q = !q;\n      else if (ch === ',' && !q) { cells.push(cur); cur = ''; }\n      else cur += ch;\n    }\n    cells.push(cur);\n    const o = {}; head.forEach((h, i) => o[h] = cells[i]);\n    o.unit_price_eur = Number(o.unit_price_eur);\n    return o;\n  });\n}\n\nreturn parseCsv(CSV).map(json => ({ json }));"
+      },
+      "id": "load-catalogue",
+      "name": "Load catalogue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "/* RFQ text -> line items. See notes inside. */\n/* ------------------------------------------------------------------\n * RFQ text -> line items.\n * Input is the plain text of a text-based PDF (n8n: \"Extract from File\").\n * Handles the three layouts distributors actually receive:\n *   A) code | description | qty | unit      (tabular)\n *   B) \"1.  CBL-NYY-J-5G2.5   Power cable ...   250 m\"\n *   C) free text, no code: \"12 pcs LED panel 600x600 40W\"\n * Anything it cannot parse is returned as an unparsed line rather\n * than silently dropped — a line lost here is a line missing from the\n * quotation, which is worse than a line flagged.\n * ------------------------------------------------------------------ */\n\nconst UNIT_WORDS = 'm|mtr|meter|metre|metres|meters|lfm|pc|pcs|pce|piece|pieces|stk|stck|st|ea|each|unit|units|set|sets|box|boxes|roll|rolls';\nconst UNIT_RE = new RegExp(`\\\\b(${UNIT_WORDS})\\\\b`, 'i');\n\n// A product code: letters and digits joined by - _ / or .\n// Must contain at least one digit, otherwise ordinary hyphenated words\n// (\"fit-out\", \"start-up\") get read as article numbers.\nconst CODE_RE = /\\b([A-Z][A-Z0-9]{1,}(?:[-_/.][A-Z0-9]+){1,6})\\b/;\nconst looksLikeCode = c => /\\d/.test(c) && /[A-Z]/.test(c);\n\nconst NOISE = /^(page\\s*\\d|seite\\s*\\d|request for quotation|rfq|quotation request|anfrage|date|datum|customer|kunde|project|projekt|delivery|lieferung|contact|kontakt|total|subtotal|summe|please quote|we kindly|thank you|best regards|mit freundlichen|item\\s+(code|no)|pos\\.?\\s|no\\.?\\s+description)/i;\n\nfunction numberish(s) {\n  const t = String(s).replace(/\\s/g, '').replace(/\\.(?=\\d{3}\\b)/g, '').replace(',', '.');\n  const n = Number(t);\n  return Number.isFinite(n) ? n : null;\n}\n\nfunction parseLine(raw, lineNo) {\n  const line = raw.replace(/ /g, ' ').trim();\n  if (!line || line.length < 4) return null;\n  if (NOISE.test(line)) return null;\n\n  let rest = line;\n\n  // leading bullet: \"- \", \"* \", \"• \", \"·\"\n  rest = rest.replace(/^\\s*[-*\\u2022\\u00b7\\u2013\\u2014]\\s+/, '');\n  // leading position number: \"1.\", \"01)\", \"3 -\"\n  rest = rest.replace(/^\\s*\\d{1,3}\\s*[.)\\-]\\s+/, '');\n  // a second bullet after a position number\n  rest = rest.replace(/^\\s*[-*\\u2022\\u00b7]\\s+/, '');\n\n  // pipe / tab separated tables\n  if (/[|\\t]/.test(rest)) {\n    const cells = rest.split(/\\s*[|\\t]\\s*/).map(c => c.trim()).filter(Boolean);\n    if (cells.length >= 3) {\n      const codeCell = CODE_RE.test(cells[0].toUpperCase()) ? cells[0] : null;\n      const qtyIdx = cells.findIndex((c, i) => i > 0 && numberish(c) !== null);\n      const qty = qtyIdx > -1 ? numberish(cells[qtyIdx]) : null;\n      const unitCell = cells.slice(qtyIdx + 1).find(c => UNIT_RE.test(c));\n      const desc = cells.filter((c, i) => i !== qtyIdx && c !== codeCell && c !== unitCell).join(' ').trim();\n      if (qty !== null) {\n        return item(lineNo, codeCell, desc, qty, unitCell ? (unitCell.match(UNIT_RE) || [])[1] : null, line);\n      }\n    }\n  }\n\n  // quantity + unit, either trailing (\"... 250 m\") or leading (\"12 pcs LED ...\")\n  let qty = null, unit = null, work = rest;\n\n  const trailing = work.match(new RegExp(`(?:^|\\\\s)([0-9][0-9.,\\\\s]*)\\\\s*(${UNIT_WORDS})\\\\.?\\\\s*$`, 'i'));\n  const leading  = work.match(new RegExp(`^([0-9][0-9.,]*)\\\\s*(${UNIT_WORDS})\\\\b\\\\s*`, 'i'));\n\n  if (trailing) {\n    qty = numberish(trailing[1]); unit = trailing[2];\n    work = work.slice(0, work.length - trailing[0].length).trim();\n  } else if (leading) {\n    qty = numberish(leading[1]); unit = leading[2];\n    work = work.slice(leading[0].length).trim();\n  } else {\n    const bare = work.match(/(?:^|\\s)([0-9][0-9.,]*)\\s*$/);\n    if (bare) { qty = numberish(bare[1]); work = work.slice(0, work.length - bare[0].length).trim(); }\n  }\n\n  const full = work.trim();\n  const cm = work.toUpperCase().match(CODE_RE);\n  let code = null;\n  if (cm && looksLikeCode(cm[1])) {\n    const at = work.toUpperCase().indexOf(cm[1]);\n    code = work.substr(at, cm[1].length);\n    work = (work.slice(0, at) + ' ' + work.slice(at + code.length)).replace(/\\s+/g, ' ').trim();\n  }\n\n  const desc = work.replace(/^[-–—:\\s]+|[-–—:\\s]+$/g, '').trim();\n\n  // A line item has to carry at least a quantity or an article code.\n  // Prose (\"we need a quotation for the following material\") has neither,\n  // and dropping it here is safer than letting it reach the matcher.\n  if (qty === null && !code) return null;\n  return item(lineNo, code, desc, qty, unit, line, full);\n}\n\nfunction item(lineNo, code, description, qty, unit, source, full) {\n  return {\n    line: lineNo,\n    code: code || null,\n    description: description || null,\n    // description with the code left in: some codes ARE part of the\n    // product name (H07V-K), and stripping them loses the match.\n    description_full: full || description || null,\n    qty: qty,\n    unit: unit ? unit.toLowerCase() : null,\n    source_text: source,\n    parse_warning: qty === null ? 'quantity not found on this line' : null\n  };\n}\n\nfunction parseRfq(text) {\n  const lines = String(text).split(/\\r?\\n/);\n  const items = [];\n  let n = 0;\n  for (const raw of lines) {\n    const it = parseLine(raw, n + 1);\n    if (it) { n++; it.line = n; items.push(it); }\n  }\n  return items;\n}\n\n\n\nconst text = $('Extract from File').first().json.text || '';\nconst items = parseRfq(text);\n\nif (!items.length) {\n  // Loud, not silent: an empty parse means the PDF was scanned, or the\n  // layout is one we have not seen. Better to stop than to send an\n  // empty quotation.\n  throw new Error('No line items could be read from this PDF. If it is a scan, OCR is required first.');\n}\n\nreturn items.map(json => ({ json }));"
+      },
+      "id": "parse-rfq-lines",
+      "name": "Parse RFQ lines",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        180,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "/* Matcher. Allowed to say \"I don't know\" — see CFG. */\n/* ------------------------------------------------------------------\n * RFQ line-item matcher  —  dependency-free, runs unchanged in an\n * n8n Code node (Run Once for All Items) and in plain Node for tests.\n *\n * Design rule: the matcher is allowed to say \"I don't know\".\n * A wrong price on a quotation costs more than a line a human checks,\n * so every tier below has to clear BOTH an absolute score and a\n * margin over the runner-up. Ties go to review, never to the winner.\n * ------------------------------------------------------------------ */\n\nconst CFG = {\n  CODE_FUZZY_MIN:   0.88,  // code similarity needed when codes differ\n  CODE_DESC_SUPPORT:0.55,  // description must not contradict a fuzzy code hit\n  DESC_MIN:         0.82,  // description-only match, absolute floor\n  DESC_MARGIN:      0.08,  // ...and it must beat the runner-up by this much\n  CODE_MARGIN:      0.05,\n  CANDIDATES:       3      // how many alternatives to show a reviewer\n};\n\n/* ---------- normalisation ---------- */\n\nconst stripDiacritics = s =>\n  s.normalize('NFD').replace(/[̀-ͯ]/g, '');\n\nfunction normCode(s) {\n  return stripDiacritics(String(s || ''))\n    .toUpperCase()\n    .replace(/[^A-Z0-9]/g, '');\n}\n\nconst UNIT_MAP = {\n  'm': 'm', 'mtr': 'm', 'meter': 'm', 'metre': 'm', 'metres': 'm', 'meters': 'm', 'lfm': 'm',\n  'pc': 'pc', 'pcs': 'pc', 'pce': 'pc', 'piece': 'pc', 'pieces': 'pc',\n  'stk': 'pc', 'stck': 'pc', 'st': 'pc', 'ea': 'pc', 'each': 'pc', 'unit': 'pc', 'units': 'pc',\n  'set': 'set', 'sets': 'set',\n  'box': 'box', 'boxes': 'box',\n  'roll': 'roll', 'rolls': 'roll'\n};\n\nfunction normUnit(s) {\n  const k = stripDiacritics(String(s || '')).toLowerCase().replace(/[^a-z]/g, '');\n  return UNIT_MAP[k] || (k || null);\n}\n\n// Descriptions: fold the notation that varies between a customer's RFQ\n// and a distributor's catalogue but means the same thing.\nconst DESC_SYNONYM = [\n  [/\\bmm2\\b|\\bmm²\\b|\\bsqmm\\b|\\bsq mm\\b/g, 'mm2'],\n  [/\\bmcb\\b|\\bminiature circuit breaker\\b|\\bcircuit breaker\\b|\\bautomat\\b/g, 'mcb'],\n  [/\\brcd\\b|\\brccb\\b|\\bresidual current\\b|\\bearth leakage\\b|\\bfi switch\\b|\\bfi\\b/g, 'rcd'],\n  [/\\bpole\\b|\\bpoles\\b|\\bp\\b(?=\\s|$)/g, 'pole'],\n  [/\\bcontactor\\b|\\bschutz\\b/g, 'contactor'],\n  [/\\bpsu\\b|\\bpower supply\\b|\\bnetzteil\\b/g, 'psu'],\n  [/\\benclosure\\b|\\bcabinet\\b|\\bgehause\\b|\\bgehaeuse\\b/g, 'enclosure'],\n  [/\\bgland\\b|\\bverschraubung\\b/g, 'gland'],\n  [/\\bsocket\\b|\\bsteckdose\\b/g, 'socket'],\n  [/\\bcable\\b|\\bkabel\\b|\\bleitung\\b/g, 'cable'],\n  [/\\bgrey\\b|\\bgray\\b|\\bgrau\\b/g, 'grey'],\n  [/\\bvac\\b|\\bv ac\\b/g, 'vac'],\n  [/\\bvdc\\b|\\bv dc\\b/g, 'vdc']\n];\n\nconst STOP = new Set(['the','a','an','and','or','of','for','with','type','pcs','pc','st','stk']);\n\nfunction normDesc(s) {\n  let t = stripDiacritics(String(s || '')).toLowerCase();\n  t = t.replace(/\\u00b2/g, '2').replace(/\\u00b3/g, '3');   // mm² -> mm2\n  t = t.replace(/[×x](?=\\d)/g, 'x');\n  t = t.replace(/[^a-z0-9.,/x-]+/g, ' ');\n  t = t.replace(/,(?=\\d)/g, '.');           // 2,5 mm² -> 2.5 mm2\n  for (const [re, to] of DESC_SYNONYM) t = t.replace(re, to);\n  return t.replace(/\\s+/g, ' ').trim();\n}\n\nfunction tokens(s) {\n  return normDesc(s).split(' ').filter(w => w && !STOP.has(w));\n}\n\n/* ---------- similarity ---------- */\n\nfunction levenshtein(a, b) {\n  if (a === b) return 0;\n  if (!a.length) return b.length;\n  if (!b.length) return a.length;\n  let prev = new Array(b.length + 1);\n  for (let j = 0; j <= b.length; j++) prev[j] = j;\n  for (let i = 1; i <= a.length; i++) {\n    const cur = [i];\n    for (let j = 1; j <= b.length; j++) {\n      cur[j] = Math.min(\n        prev[j] + 1,\n        cur[j - 1] + 1,\n        prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)\n      );\n    }\n    prev = cur;\n  }\n  return prev[b.length];\n}\n\nconst ratio = (a, b) =>\n  (!a.length && !b.length) ? 1 : 1 - levenshtein(a, b) / Math.max(a.length, b.length);\n\n// Token-set similarity, weighted so that numeric tokens (16, 2.5, 400)\n// count double: in electrical parts the number IS the product.\nfunction tokenSetSim(aTok, bTok) {\n  if (!aTok.length || !bTok.length) return 0;\n  const w = t => (/\\d/.test(t) ? 2 : 1);\n  const bPool = bTok.slice();\n  let inter = 0, aW = 0, bW = 0;\n  for (const t of aTok) aW += w(t);\n  for (const t of bTok) bW += w(t);\n  for (const t of aTok) {\n    let bi = -1, best = 0;\n    for (let i = 0; i < bPool.length; i++) {\n      const r = ratio(t, bPool[i]);\n      if (r > best) { best = r; bi = i; }\n    }\n    if (best >= 0.86 && bi >= 0) { inter += w(t) * best; bPool.splice(bi, 1); }\n  }\n  return (2 * inter) / (aW + bW);\n}\n\nfunction descSim(a, b) {\n  const at = tokens(a), bt = tokens(b);\n  const set = tokenSetSim(at, bt);\n  const seq = ratio(normDesc(a), normDesc(b));\n  return 0.75 * set + 0.25 * seq;   // set-based leads; sequence breaks ties\n}\n\n/* ---------- matching ---------- */\n\nfunction buildIndex(catalogue) {\n  const byCode = new Map();\n  const rows = catalogue.map(c => {\n    const r = {\n      code: String(c.code).trim(),\n      description: String(c.description || ''),\n      unit: normUnit(c.unit),\n      unit_price_eur: Number(c.unit_price_eur),\n      manufacturer: c.manufacturer || null,\n      _nc: normCode(c.code),\n      _dt: tokens(c.description)\n    };\n    byCode.set(r._nc, r);\n    return r;\n  });\n  return { rows, byCode };\n}\n\nfunction scoreAll(item, idx) {\n  const d1 = item.description || '';\n  const d2 = item.description_full || d1;\n  return idx.rows.map(r => ({\n    row: r,\n    code: item.code ? ratio(normCode(item.code), r._nc) : 0,\n    desc: Math.max(descSim(d1, r.description), d2 === d1 ? 0 : descSim(d2, r.description))\n  }));\n}\n\nfunction matchItem(item, idx) {\n  const out = {\n    line: item.line,\n    raw_code: item.code || null,\n    raw_description: item.description || null,\n    qty: item.qty,\n    raw_unit: item.unit || null,\n    status: 'review',\n    reason: null,\n    matched_code: null,\n    matched_description: null,\n    unit: null,\n    unit_price_eur: null,\n    line_total_eur: null,\n    confidence: 0,\n    candidates: []\n  };\n\n  // Tier 1 — exact normalised code.\n  if (item.code) {\n    const hit = idx.byCode.get(normCode(item.code));\n    if (hit) return finish(out, hit, 1.0, normCode(item.code) === normCode(hit.code) && item.code.trim() === hit.code ? 'exact code' : 'code, normalised');\n  }\n\n  // Tier 1b — the code exists but was typed without separators:\n  // \"cbl nyy j 5g4\" instead of \"CBL-NYY-J-5G4\". Distributors' customers\n  // do this constantly; treating it as a description match loses it.\n  if (item.description_full || item.description) {\n    const toks = String(item.description_full || item.description).trim().split(/\\s+/);\n    for (let k = Math.min(7, toks.length); k >= 2; k--) {\n      const joined = normCode(toks.slice(0, k).join(''));\n      if (joined.length < 6) continue;\n      const hit = idx.byCode.get(joined);\n      if (hit) return finish(out, hit, 0.98, 'code written without separators');\n    }\n  }\n\n  const scored = scoreAll(item, idx);\n\n  // Tier 2 — fuzzy code, but only if the description does not contradict it.\n  if (item.code) {\n    const byCode = scored.slice().sort((a, b) => b.code - a.code);\n    const top = byCode[0], next = byCode[1];\n    if (top && top.code >= CFG.CODE_FUZZY_MIN &&\n        top.desc >= CFG.CODE_DESC_SUPPORT &&\n        (!next || top.code - next.code >= CFG.CODE_MARGIN)) {\n      return finish(out, top.row, Math.min(0.96, 0.6 * top.code + 0.4 * top.desc), 'code near-match, description agrees');\n    }\n    if (top && top.code >= CFG.CODE_FUZZY_MIN && top.desc < CFG.CODE_DESC_SUPPORT) {\n      out.reason = 'code looks close but description disagrees — possible typo on a different article';\n      out.candidates = topN(byCode, item);\n      return out;\n    }\n  }\n\n  // Tier 3 — description only.\n  const byDesc = scored.slice().sort((a, b) => b.desc - a.desc);\n  const top = byDesc[0], next = byDesc[1];\n  if (top && top.desc >= CFG.DESC_MIN && (!next || top.desc - next.desc >= CFG.DESC_MARGIN)) {\n    const unitClash = item.unit && top.row.unit && normUnit(item.unit) !== top.row.unit;\n    if (unitClash) {\n      out.reason = `description matches ${top.row.code} but unit differs (RFQ \"${item.unit}\" vs catalogue \"${top.row.unit}\")`;\n      out.candidates = topN(byDesc, item);\n      return out;\n    }\n    return finish(out, top.row, Math.min(0.93, top.desc), 'description match, clear margin');\n  }\n\n  out.reason = !top || top.desc < 0.45\n    ? 'no plausible catalogue article'\n    : (next && top.desc - next.desc < CFG.DESC_MARGIN\n        ? `ambiguous: ${top.row.code} and ${next.row.code} score within ${((top.desc - next.desc) * 100).toFixed(1)} points`\n        : 'below confidence threshold');\n  out.candidates = topN(byDesc, item);\n  return out;\n\n  function finish(o, row, conf, reason) {\n    o.status = 'matched';\n    o.reason = reason;\n    o.matched_code = row.code;\n    o.matched_description = row.description;\n    o.unit = row.unit;\n    o.unit_price_eur = row.unit_price_eur;\n    o.line_total_eur = round2(row.unit_price_eur * (Number(o.qty) || 0));\n    o.confidence = round3(conf);\n    const unitClash = o.raw_unit && row.unit && normUnit(o.raw_unit) !== row.unit;\n    if (unitClash) {\n      o.status = 'review';\n      o.reason = `matched ${row.code} but unit differs (RFQ \"${o.raw_unit}\" vs catalogue \"${row.unit}\") — quantity must be confirmed`;\n    }\n    return o;\n  }\n}\n\nfunction topN(sortedScored, item) {\n  return sortedScored.slice(0, CFG.CANDIDATES).map(s => ({\n    code: s.row.code,\n    description: s.row.description,\n    unit: s.row.unit,\n    unit_price_eur: s.row.unit_price_eur,\n    code_score: round3(s.code),\n    desc_score: round3(s.desc)\n  }));\n}\n\nconst round2 = n => Math.round(n * 100) / 100;\nconst round3 = n => Math.round(n * 1000) / 1000;\n\nfunction matchAll(items, catalogue) {\n  const idx = buildIndex(catalogue);\n  const lines = items.map(it => matchItem(it, idx));\n  const matched = lines.filter(l => l.status === 'matched');\n  return {\n    lines,\n    summary: {\n      total_lines: lines.length,\n      matched: matched.length,\n      review: lines.length - matched.length,\n      quote_subtotal_eur: round2(matched.reduce((s, l) => s + (l.line_total_eur || 0), 0)),\n      note: 'Lines in review carry no price and are excluded from the subtotal by design.'\n    }\n  };\n}\n\n\n\nconst items = $input.all().map(i => i.json);\nconst catalogue = $('Load catalogue').all().map(i => i.json);\nconst res = matchAll(items, catalogue);\n\nreturn [{ json: { summary: res.summary, generated_at: new Date().toISOString() } }]\n  .concat(res.lines.map(json => ({ json })));"
+      },
+      "id": "match-against-catalogue",
+      "name": "Match against catalogue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "/* Flatten to spreadsheet rows. Review lines keep their candidates\n * in one cell so the person checking never has to open the JSON. */\nconst all = $input.all().map(i => i.json);\nconst summary = all[0].summary ? all.shift().summary : null;\n\nconst rows = all.map(l => ({\n  Line: l.line,\n  'RFQ code': l.raw_code || '',\n  'RFQ description': l.raw_description || '',\n  Qty: l.qty,\n  Unit: l.raw_unit || '',\n  'Matched code': l.matched_code || '',\n  'Catalogue description': l.matched_description || '',\n  'Unit price EUR': l.unit_price_eur,\n  'Line total EUR': l.line_total_eur,\n  Confidence: l.confidence || '',\n  Status: l.status === 'review' ? 'REVIEW' : 'matched',\n  'Note / why': l.reason || '',\n  Candidates: (l.candidates || []).map(c => c.code + ' (' + c.desc_score + ')').join('  |  ')\n}));\n\nif (summary) {\n  rows.push({});\n  rows.push({\n    Line: '', 'RFQ description': 'Lines: ' + summary.total_lines +\n      '   matched: ' + summary.matched + '   review: ' + summary.review,\n    'Line total EUR': summary.quote_subtotal_eur,\n    'Note / why': summary.note\n  });\n}\n\nreturn rows.map(json => ({ json }));"
+      },
+      "id": "rows-for-excel",
+      "name": "Rows for Excel",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        620,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {
+          "fileName": "quotation_draft.xlsx",
+          "sheetName": "Quotation draft"
+        }
+      },
+      "id": "quotation-draft-xlsx",
+      "name": "Quotation draft.xlsx",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        840,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "RFQ upload": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Load catalogue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load catalogue": {
+      "main": [
+        [
+          {
+            "node": "Parse RFQ lines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse RFQ lines": {
+      "main": [
+        [
+          {
+            "node": "Match against catalogue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Match against catalogue": {
+      "main": [
+        [
+          {
+            "node": "Rows for Excel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rows for Excel": {
+      "main": [
+        [
+          {
+            "node": "Quotation draft.xlsx",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "rfq-demo"
+  },
+  "tags": []
+}

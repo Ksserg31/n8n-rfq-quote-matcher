@@ -1,0 +1,45 @@
+code,description,unit,unit_price_eur,manufacturer
+CBL-NYY-J-5G2.5,"Power cable NYY-J 5G2.5 mm² black",m,3.85,Lapp
+CBL-NYY-J-5G4,"Power cable NYY-J 5G4 mm² black",m,5.90,Lapp
+CBL-NYY-J-3G1.5,"Power cable NYY-J 3G1.5 mm² black",m,1.72,Lapp
+CBL-NYM-J-3G1.5,"Installation cable NYM-J 3G1.5 mm² grey",m,1.05,Lapp
+CBL-NYM-J-5G2.5,"Installation cable NYM-J 5G2.5 mm² grey",m,2.68,Lapp
+CBL-H07V-K-1X6,"Single core H07V-K 1x6 mm² green/yellow",m,1.24,Helukabel
+CBL-H07V-K-1X10,"Single core H07V-K 1x10 mm² black",m,2.05,Helukabel
+MCB-B16-1P,"Miniature circuit breaker B16 1-pole 6kA",pc,6.40,Hager
+MCB-B16-3P,"Miniature circuit breaker B16 3-pole 6kA",pc,19.80,Hager
+MCB-C16-1P,"Miniature circuit breaker C16 1-pole 6kA",pc,6.95,Hager
+MCB-B10-1P,"Miniature circuit breaker B10 1-pole 6kA",pc,6.20,Hager
+MCB-B32-3P,"Miniature circuit breaker B32 3-pole 6kA",pc,23.40,Hager
+RCD-40-2P-30,"Residual current device 40A 2-pole 30mA type A",pc,48.50,Hager
+RCD-40-4P-30,"Residual current device 40A 4-pole 30mA type A",pc,76.20,Hager
+RCD-63-4P-30,"Residual current device 63A 4-pole 30mA type A",pc,98.40,Hager
+CON-9A-230,"Contactor 9A 3-pole coil 230VAC 1NO",pc,28.90,Schneider
+CON-12A-230,"Contactor 12A 3-pole coil 230VAC 1NO",pc,34.10,Schneider
+CON-18A-230,"Contactor 18A 3-pole coil 230VAC 1NO",pc,46.70,Schneider
+CON-25A-24,"Contactor 25A 3-pole coil 24VDC 1NO",pc,61.30,Schneider
+OLR-6-10,"Thermal overload relay 6-10A",pc,32.80,Schneider
+OLR-9-13,"Thermal overload relay 9-13A",pc,34.50,Schneider
+ENC-IP65-300,"Wall enclosure IP65 300x200x150 grey",pc,42.00,Rittal
+ENC-IP65-400,"Wall enclosure IP65 400x300x200 grey",pc,64.50,Rittal
+ENC-IP66-600,"Wall enclosure IP66 600x400x200 grey",pc,118.00,Rittal
+DIN-RAIL-35,"DIN rail TS35 perforated 2m",pc,4.60,Rittal
+TB-2.5-GY,"Terminal block screw 2.5mm² grey",pc,0.62,Phoenix
+TB-4-GY,"Terminal block screw 4mm² grey",pc,0.88,Phoenix
+TB-2.5-BU,"Terminal block screw 2.5mm² blue",pc,0.66,Phoenix
+CGL-M20,"Cable gland M20 IP68 plastic grey",pc,0.74,Lapp
+CGL-M25,"Cable gland M25 IP68 plastic grey",pc,0.95,Lapp
+CGL-M32,"Cable gland M32 IP68 plastic grey",pc,1.48,Lapp
+SOC-CEE-16-5P,"CEE socket 16A 5-pole 400V IP44 surface",pc,14.20,Mennekes
+SOC-CEE-32-5P,"CEE socket 32A 5-pole 400V IP44 surface",pc,26.80,Mennekes
+PLG-CEE-16-5P,"CEE plug 16A 5-pole 400V IP44",pc,11.90,Mennekes
+LED-PAN-600-40,"LED panel 600x600 40W 4000K UGR19",pc,38.90,Ledvance
+LED-PAN-600-30,"LED panel 600x600 30W 4000K UGR19",pc,34.20,Ledvance
+LED-BAT-1500-50,"LED batten 1500mm 50W 4000K IP65",pc,29.60,Ledvance
+SW-1P-IP44,"Surface switch 1-pole 10A IP44 grey",pc,5.30,Gira
+SOC-SCHUKO-IP44,"Surface Schuko socket 16A IP44 grey",pc,6.80,Gira
+PSU-24-5,"DIN rail power supply 24VDC 5A 120W",pc,74.50,Mean Well
+PSU-24-10,"DIN rail power supply 24VDC 10A 240W",pc,118.00,Mean Well
+SPD-T2-4P,"Surge protection device type 2 4-pole",pc,89.00,Dehn
+CT-100-5,"Current transformer 100/5A class 1",pc,21.40,Janitza
+ML-CU-12X2,"Copper busbar 12x2mm 1m",pc,9.80,Rittal
