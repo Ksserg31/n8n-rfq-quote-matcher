@@ -1,0 +1,40 @@
+{
+  "rfq_01_voltmark.pdf": [
+    {"line":1,"expect":"CBL-NYY-J-5G2.5","qty":250,"why":"exact code"},
+    {"line":2,"expect":"CBL-NYM-J-3G1.5","qty":1200,"why":"exact code; qty in European thousands format 1.200"},
+    {"line":3,"expect":"MCB-B16-3P","qty":24,"why":"exact code"},
+    {"line":4,"expect":"RCD-40-4P-30","qty":6,"why":"exact code, abbreviated description"},
+    {"line":5,"expect":"CON-12A-230","qty":12,"why":"exact code"},
+    {"line":6,"expect":"ENC-IP65-400","qty":4,"why":"exact code"},
+    {"line":7,"expect":"DIN-RAIL-35","qty":18,"why":"exact code"},
+    {"line":8,"expect":"CGL-M25","qty":120,"why":"exact code"},
+    {"line":9,"expect":"LED-PAN-600-40","qty":36,"why":"exact code"},
+    {"line":10,"expect":"PSU-24-5","qty":3,"why":"exact code"}
+  ],
+  "rfq_02_nordlicht.pdf": [
+    {"line":1,"expect":"CBL-NYY-J-5G4","qty":180,"why":"code written lowercase with spaces instead of separators"},
+    {"line":2,"expect":"MCB-B16-1P","qty":40,"why":"exact code"},
+    {"line":3,"expect":"REVIEW_OR:MCB-B16-3P","qty":10,"why":"typo 3B for 3P; description says 3-pole. Matching it is correct, flagging it is acceptable, matching MCB-B16-1P is a failure"},
+    {"line":4,"expect":"SOC-CEE-32-5P","qty":8,"why":"exact code"},
+    {"line":5,"expect":"OLR-9-13","qty":6,"why":"exact code"},
+    {"line":6,"expect":"TB-2.5-GY","qty":400,"why":"exact code"},
+    {"line":7,"expect":"SPD-T2-4P","qty":2,"why":"exact code"},
+    {"line":8,"expect":"REVIEW_OR:ML-CU-12X2","qty":14,"why":"exact code; RFQ unit m vs catalogue pc - unit clash must be surfaced"},
+    {"line":9,"expect":"REVIEW","qty":2,"why":"article not in catalogue - must not be matched to anything"},
+    {"line":10,"expect":"LED-BAT-1500-50","qty":22,"why":"exact code"}
+  ],
+  "rfq_03_workshop.pdf": [
+    {"line":1,"expect":"CBL-NYM-J-5G2.5","qty":320,"why":"description only"},
+    {"line":2,"expect":"SOC-SCHUKO-IP44","qty":45,"why":"description only"},
+    {"line":3,"expect":"SW-1P-IP44","qty":30,"why":"description only"},
+    {"line":4,"expect":"RCD-63-4P-30","qty":8,"why":"description only, must not collapse to the 40A variants"},
+    {"line":5,"expect":"REVIEW","qty":16,"why":"ambiguous: B16 exists as 1-pole and 3-pole. Picking either silently is the expensive failure"},
+    {"line":6,"expect":"ENC-IP66-600","qty":12,"why":"description only"},
+    {"line":7,"expect":"CGL-M20","qty":200,"why":"description only"},
+    {"line":8,"expect":"CBL-H07V-K-1X10","qty":60,"why":"description only, must not collapse to 1x6"},
+    {"line":9,"expect":"CT-100-5","qty":5,"why":"description only"},
+    {"line":10,"expect":"LED-PAN-600-30","qty":20,"why":"description only, must not collapse to the 40W panel"},
+    {"line":11,"expect":"TB-4-GY","qty":90,"why":"description only, must not collapse to 2.5mm2 grey or 4mm2 blue"},
+    {"line":12,"expect":"REVIEW","qty":3,"why":"article not in catalogue"}
+  ]
+}
